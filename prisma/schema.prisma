@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String        @id @default(uuid())
+  username      String
+  email         String        @unique
+  name          String?
+  password      String?
+  avatar        String?
+  bg            String?
+  emailVerified Boolean?      @default(false)
+  followers     Follows[]     @relation("following")
+  following     Follows[]     @relation("followers")
+  posts         Post[]
+  accounts      Account[]
+  postLike      PostLike[]
+  commentLike   CommentLike[]
+  createdAt     DateTime?     @default(now())
+  // sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Follows {
+  id          Int    @id @default(autoincrement())
+  userId      String
+  recipientId String
+  user        User   @relation("following", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  recipient   User   @relation("followers", fields: [recipientId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
+model Post {
+  id             Int              @id @default(autoincrement())
+  userId         String?
+  text           String?          @db.VarChar(500)
+  user           User?            @relation(fields: [userId], references: [id], onUpdate: SetNull, onDelete: Cascade)
+  attachments    PostAttachment[] @relation("post")
+  replyAvailable ReplyAvailable   @default(ALL)
+  comments       Comment[]
+  likes          PostLike[]
+  draft          Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+}
+
+model PostAttachment {
+  id       Int                @id @default(autoincrement())
+  type     PostAttachmentType
+  postId   Int
+  post     Post               @relation("post", fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  publicId String
+  url      String
+}
+
+model PostLike {
+  id     Int    @id @default(autoincrement())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  postId Int
+  post   Post   @relation(fields: [postId], references: [id])
+}
+
+model Comment {
+  id          Int                 @id @default(autoincrement())
+  postId      Int
+  post        Post                @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  attachments CommentAttachment[]
+  likes       CommentLike[]
+  createdAt   DateTime            @default(now())
+}
+
+model CommentAttachment {
+  id        Int                @id @default(autoincrement())
+  type      PostAttachmentType
+  commentId Int
+  comment   Comment            @relation(fields: [commentId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  publicId  String
+  url       String
+}
+
+model CommentLike {
+  id        Int     @id @default(autoincrement())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  commentId Int
+  comment   Comment @relation(fields: [commentId], references: [id])
+}
+
+enum PostAttachmentType {
+  image
+  video
+}
+
+enum ReplyAvailable {
+  ALL
+  FOLLOWERS
+  UNAVAILABLE
+}
+
+// model 
+// model Attachment {
+//   id       Int     @id @default(autoincrement())
+//   publicId String
+//   url      String? 
+// }
+
+// model Session {
+//   id           String   @id @default(cuid())
+//   sessionToken String   @unique
+//   userId       String
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// }
+
+// model VerificationToken {
+//   identifier String
+//   token      String   @unique
+//   expires    DateTime
+
+//   @@unique([identifier, token])
+// }
