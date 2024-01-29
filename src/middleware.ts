@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 import { withAuth, NextRequestWithAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
-import { nextAuthOptions } from "./app/api/auth/[...nextauth]/route";
+// import { nextAuthOptions } from "./app/api/auth/[...nextauth]/route";
 // import type { WithAuthArgs } from "next-auth/middleware";
 // export const nextCookieOpts = {
 //   // default cookie options

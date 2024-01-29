@@ -3,11 +3,11 @@ import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 import { RootProvider } from "@/components/providers/RootProvider";
 import { getServerSession } from "next-auth";
-import { nextAuthOptions } from "./api/auth/[...nextauth]/route";
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
+import { nextAuthOptions } from "@/lib/auth-options";
 
 const inter = Inter({ subsets: ["latin"] });
 const montserrat = Montserrat({ subsets: ["latin"] });

@@ -1,14 +1,15 @@
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import serverAuth from "@/lib/serverAuth";
 import { NextApiRequest } from "next";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { auth } from "../../auth/[...nextauth]/route";
+// import { auth } from "../../auth/[...nextauth]/route";
 
 export async function GET(req: Request) {
   try {
     // const { currentUser } = await serverAuth(req);
-    const currentUser = await getServerSession();
+    const currentUser = await auth();
     const following = await prisma.follows.findMany({
       where: {
         userId: currentUser?.user.id,

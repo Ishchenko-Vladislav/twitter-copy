@@ -11,7 +11,7 @@ export const Client: FC<Props> = () => {
     <Tabs onValueChange={(value) => console.log(value)} defaultValue="For you" className="w-full">
       <TabsList className="z-20 w-full rounded-none sticky top-0 bg-background/80 backdrop-blur-sm h-12 p-0 border-b border-border">
         <TabsTrigger
-          className="group w-full p-0 hover:bg-accent h-full rounded-none text-foreground font-semibold shadow-none data-[state='active']:!shadow-none"
+          className="group w-full data-[state='active']:bg-background/80 backdrop-blur-sm p-0 hover:bg-accent h-full rounded-none text-foreground font-semibold shadow-none data-[state='active']:!shadow-none"
           value="For you"
         >
           <div className="group-data-[state='active']:text-foreground text-muted-foreground relative w-fit h-full flex justify-center items-center">
