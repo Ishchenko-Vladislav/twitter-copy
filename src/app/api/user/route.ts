@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import serverAuth from "@/lib/serverAuth";
 import { NextApiRequest } from "next";
@@ -5,7 +6,60 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const users = await prisma.user.findMany({});
+    const session = await auth();
+    if (!session?.user.id) {
+      return NextResponse.json({
+        isError: true,
+        message: "You should be logged in.",
+      });
+    }
+    const following = await prisma.user.findFirst({
+      where: { id: session.user.id },
+      select: {
+        followers: {
+          select: {
+            recipientId: true,
+          },
+        },
+      },
+    });
+    const ids = following?.followers.map((el) => el.recipientId) ?? [];
+    const users = await prisma.user.findMany({
+      where: {
+        NOT: {
+          id: {
+            in: [...ids, session?.user.id],
+          },
+        },
+      },
+      take: 3,
+      // select: {
+      //   avatar: true,
+      // },
+      select: {
+        id: true,
+        avatar: true,
+        name: true,
+        username: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+          },
+        },
+      },
+      // include: {
+      //   _count: {
+      //     select: {
+      //       followers: true,
+      //       following: true,
+      //     },
+      //   },
+      // },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
     return NextResponse.json(users);
   } catch (error) {
     console.log("ERROR WHEN FETCH USERS");
@@ -25,10 +79,16 @@ export async function GET() {
 export async function PUT(req: Request) {
   try {
     const data = await req.json();
-    const { currentUser } = await serverAuth();
+    const session = await auth();
+    if (!session?.user.id) {
+      return NextResponse.json({
+        isError: true,
+        message: "You should be logged in.",
+      });
+    }
     const user = await prisma.user.update({
       where: {
-        id: currentUser.id,
+        id: session.user.id,
       },
       data: data,
     });

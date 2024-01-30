@@ -24,7 +24,7 @@ dayjs.updateLocale("en", {
     future: "%s",
     past: "%s",
     s: "%d s",
-    m: "&d m",
+    m: "%d m",
     mm: "%d m",
     h: "%d h",
     hh: "%d h",

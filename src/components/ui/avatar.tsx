@@ -51,6 +51,7 @@ const avatarStyles = cva(["rounded-full bg-gray-300"], {
   variants: {
     size: {
       default: ["w-10 h-10 "],
+      md: ["w-16 h-16 "],
       large: ["w-36 h-36  border-4 border-background"],
     },
   },

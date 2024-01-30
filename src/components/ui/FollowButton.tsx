@@ -1,21 +1,34 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { useFollow } from "@/hooks/user/useFollow";
 import { useFollowing } from "@/hooks/user/useFollowing";
 import { cn } from "@/lib/utils";
 import { useParams } from "next/navigation";
-import { FC } from "react";
+import React, { FC } from "react";
 // import useSWRMutation from "swr/mutation";
 import { Loader2 } from "lucide-react";
 import { useSWRConfig } from "swr";
-interface Props {
+// interface Tr exted
+interface Props extends ButtonProps {
   profileId: string;
+  withInvalidate?: boolean;
+  invalidateKey?: string;
+  onSuccess?: (i: boolean) => void;
 }
 
-export const FollowButton: FC<Props> = ({ profileId }) => {
+export const FollowButton: FC<Props> = ({
+  profileId,
+  withInvalidate = false,
+  invalidateKey,
+  onSuccess,
+  className,
+  ...attr
+}) => {
   //   const { data, error } = useFollowing();
   const { toggleFollow, isFollow, isLoading } = useFollow(profileId as string, {
-    withInvalidate: true,
+    withInvalidate,
+    invalidateKey,
+    onSuccess,
   });
 
   return (
@@ -23,9 +36,11 @@ export const FollowButton: FC<Props> = ({ profileId }) => {
       onClick={toggleFollow}
       disabled={isLoading}
       variant={isFollow ? "outline" : "default"}
-      className={cn("rounded-full font-semibold w-28", {
-        ["hover:bg-red-100/80 hover:text-red-500 group"]: isFollow,
+      className={cn("rounded-full font-semibold", {
+        ["hover:bg-red-100/80 hover:text-red-500 hover:border-red-500 group"]: isFollow,
+        className,
       })}
+      {...attr}
     >
       {!isLoading ? (
         isFollow ? (

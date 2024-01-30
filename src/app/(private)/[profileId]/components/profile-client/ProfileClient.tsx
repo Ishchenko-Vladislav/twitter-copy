@@ -12,15 +12,39 @@ import { FollowButton } from "@/components/ui/FollowButton";
 import { UpdateProfile } from "./update-profile/UpdateProfile";
 import { User } from "@prisma/client";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 interface Props {}
 
 export const ProfileClient: FC<Props> = () => {
   const params = useParams();
   const { user, isError, isLoading } = useUser(params.profileId as string);
   const { data } = useSession();
-  console.log("session", data);
+  // console.log("session user", user);
   if (isLoading) {
-    return <div>loading</div>;
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <div className="flex flex-col w-full">
+          <Skeleton className="w-full h-52" />
+          <div className="w-full flex items-end justify-between px-4 -mt-[4.5rem]">
+            <DefaultAvatar size={"large"} />
+            <Skeleton className="w-32 h-10 rounded-full mb-6" />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 px-4">
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-5 w-56" />
+          </div>
+          <div className="flex gap-2 items-center text-sm text-muted-foreground">
+            <Skeleton className="h-5 w-56" />
+          </div>
+          <div className="flex gap-4 items-center text-sm">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-5 w-24" />
+          </div>
+        </div>
+      </div>
+    );
   }
   if (isError) {
     return <div>error</div>;
@@ -38,7 +62,11 @@ export const ProfileClient: FC<Props> = () => {
               <UpdateProfile user={user as User} />
             ) : (
               <div className="w-full">
-                <FollowButton profileId={params.profileId as string} />
+                <FollowButton
+                  withInvalidate
+                  invalidateKey={`/api/user/${params.profileId}`}
+                  profileId={params.profileId as string}
+                />
               </div>
             )}
           </div>
@@ -54,12 +82,12 @@ export const ProfileClient: FC<Props> = () => {
           <span>Joined {dayjs(user?.createdAt as Date).format("MMMM YYYY")}</span>
         </div>
         <div className="flex gap-4 items-center text-sm">
-          <Link className="flex gap-1 hover:underline" href={"/"}>
-            <span className="font-semibold">{user?.followingCount}</span>
+          <Link className="flex gap-1 hover:underline" href={"/" + params.profileId + "/following"}>
+            <span className="font-semibold">{user?._count.followers}</span>
             <span className="text-muted-foreground">Following</span>
           </Link>
-          <Link className="flex gap-1 hover:underline" href={"/"}>
-            <span className="font-semibold">{user?.followersCount}</span>
+          <Link className="flex gap-1 hover:underline" href={"/" + params.profileId + "/followers"}>
+            <span className="font-semibold">{user?._count.following}</span>
             <span className="text-muted-foreground">Followers</span>
           </Link>
         </div>

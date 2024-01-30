@@ -32,15 +32,12 @@ export const UserButton: FC<Props> = () => {
         <Popover>
           <PopoverTrigger asChild>
             <button className="w-fit xl:w-full p-2 hover:bg-accent transition-all flex gap-2 rounded-full overflow-hidden">
-              {/* <div className="w-8 h-8 xl:w-10 xl:h-10 rounded-full bg-gray-300 flex justify-center items-center shrink-0">
-                <FaUser className="text-gray-700 text-xl" />
-              </div> */}
               <DefaultAvatar src={data?.user.avatar ?? ""} />
-              <div className="hidden xl:flex flex-col overflow-hidden text-sm items-start">
-                <div className="truncate font-semibold">
+              <div className="hidden xl:flex flex-col overflow-hidden text-sm items-start text-left">
+                <div className="truncate font-semibold w-full">
                   <span>{data?.user.name}</span>
                 </div>
-                <div className="truncate text-muted-foreground">
+                <div className="truncate text-muted-foreground w-full">
                   <span>@{data?.user.username}</span>
                 </div>
               </div>
@@ -58,7 +55,7 @@ export const UserButton: FC<Props> = () => {
             </DialogTrigger>
             <PopoverClose asChild>
               <button
-                className="p-2 hover:bg-accent transition-all items-center flex flex-wrap gap-1 text-sm font-semibold"
+                className="p-2 hover:bg-accent transition-all text-left items-center flex flex-wrap gap-1 text-sm font-semibold"
                 onClick={logout}
               >
                 <span>Log out</span>

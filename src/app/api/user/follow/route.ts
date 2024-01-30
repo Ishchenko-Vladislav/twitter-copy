@@ -9,10 +9,16 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   try {
     // const { currentUser } = await serverAuth(req);
-    const currentUser = await auth();
+    const session = await auth();
+    if (!session?.user.id) {
+      return NextResponse.json({
+        isError: true,
+        message: "You should be logged in.",
+      });
+    }
     const following = await prisma.follows.findMany({
       where: {
-        userId: currentUser?.user.id,
+        userId: session?.user.id,
       },
       // include: {
       //   recipient: true,
@@ -28,6 +34,13 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const { recipientId } = await req.json();
+    const session = await auth();
+    if (!session?.user.id) {
+      return NextResponse.json({
+        isError: true,
+        message: "You should be logged in.",
+      });
+    }
     if (!recipientId) {
       return NextResponse.json("Provide recipientId", { status: 400 });
     }
@@ -45,28 +58,6 @@ export async function POST(req: Request) {
     if (!recipient) {
       return NextResponse.json("This user does't exist", { status: 400 });
     }
-    // const existFollow = await prisma.follows.findFirst({
-    //   where: {
-    //     userId: currentUser.id,
-    //     recipientId: recipient.id,
-    //   },
-    // });
-    // if (existFollow) {
-    //   const follow = await prisma.follows.delete({
-    //     where: {
-    //       id: existFollow.id,
-    //     },
-    //   });
-    //   return NextResponse.json(follow);
-    // } else {
-    //   const follow = await prisma.follows.create({
-    //     data: {
-    //       recipientId: recipientId,
-    //       userId: currentUser.id,
-    //     },
-    //   });
-    //   return NextResponse.json(follow);
-    // }
     const follow = await prisma.follows.create({
       data: {
         recipientId: recipientId,
@@ -82,15 +73,21 @@ export async function POST(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const { recipientId } = await req.json();
-    const { currentUser } = await serverAuth();
+    const session = await auth();
+    if (!session?.user.id) {
+      return NextResponse.json({
+        isError: true,
+        message: "You should be logged in.",
+      });
+    }
 
-    if (!currentUser) {
+    if (!session.user.id) {
       return NextResponse.json("Not signed in", { status: 400 });
     }
 
     const follow = await prisma.follows.deleteMany({
       where: {
-        userId: currentUser.id,
+        userId: session.user.id,
         recipientId: recipientId,
       },
     });

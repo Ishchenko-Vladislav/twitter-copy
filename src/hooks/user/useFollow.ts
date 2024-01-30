@@ -16,8 +16,13 @@ import { useSWRConfig } from "swr";
 // };
 interface UseFollowOptions {
   withInvalidate: boolean;
+  invalidateKey?: string;
+  onSuccess?: (i: boolean) => void;
 }
-export const useFollow = (recipientId: string, { withInvalidate = true }: UseFollowOptions) => {
+export const useFollow = (
+  recipientId: string,
+  { withInvalidate = true, invalidateKey, onSuccess }: UseFollowOptions
+) => {
   const { data, mutate } = useFollowing();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFollow, setIsFollow] = useState<boolean>(
@@ -45,6 +50,9 @@ export const useFollow = (recipientId: string, { withInvalidate = true }: UseFol
           },
           { revalidate: false }
         );
+        if (onSuccess) {
+          onSuccess(false);
+        }
       } else {
         const follow = await fetch("/api/user/follow", {
           method: "POST",
@@ -59,9 +67,13 @@ export const useFollow = (recipientId: string, { withInvalidate = true }: UseFol
           },
           { revalidate: false }
         );
+        if (onSuccess) {
+          onSuccess(true);
+        }
       }
       if (withInvalidate) {
-        invalidate(`/api/user/${recipientId}`);
+        invalidate(invalidateKey);
+        // invalidate(`/api/user/${recipientId}`);
       }
     } catch (error) {
     } finally {

@@ -21,7 +21,7 @@ interface Props {}
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(5).max(40),
-  username: z.string().min(5).max(40),
+  // username: z.string().min(5).max(40),
   name: z.string().min(5).max(40),
 });
 const RegisterForm: FC<Props> = (props) => {
@@ -80,7 +80,7 @@ const RegisterForm: FC<Props> = (props) => {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="username"
           render={({ field }) => (
@@ -89,11 +89,10 @@ const RegisterForm: FC<Props> = (props) => {
               <FormControl>
                 <Input placeholder="@username" {...field} />
               </FormControl>
-              {/* <FormDescription>This is your public display name.</FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <FormField
           control={form.control}
           name="password"

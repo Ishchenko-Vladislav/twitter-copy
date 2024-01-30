@@ -12,7 +12,7 @@ export const Client: FC<Props> = () => {
   const pathname = usePathname();
   const { data } = useSession();
   return (
-    <div>
+    <nav>
       {desktop_data.map((el) => {
         return (
           <Link className="w-full group block" key={el.name} href={el.link}>
@@ -64,6 +64,6 @@ export const Client: FC<Props> = () => {
           </Link>
         );
       })}
-    </div>
+    </nav>
   );
 };

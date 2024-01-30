@@ -44,7 +44,7 @@ export const CreatePost: FC<Props> = () => {
             />
           </div>
           <div
-            className={cn("w-full grid gap-1 sm:gap-3 max-h-96 ", {
+            className={cn("w-full grid gap-1 sm:gap-3", {
               ["min-h-32"]: attachments.length > 0,
               ["grid-cols-1"]: attachments.length === 1,
               ["grid-cols-2 aspect-video"]: attachments.length >= 2,

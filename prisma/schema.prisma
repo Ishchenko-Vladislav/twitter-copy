@@ -13,7 +13,7 @@ datasource db {
 
 model User {
   id            String        @id @default(uuid())
-  username      String
+  username      String        @unique @default(dbgenerated("uuid_generate_v1()"))
   email         String        @unique
   name          String?
   password      String?
@@ -26,6 +26,7 @@ model User {
   accounts      Account[]
   postLike      PostLike[]
   commentLike   CommentLike[]
+  bookmarks     Bookmark[]
   createdAt     DateTime?     @default(now())
   // sessions      Session[]
 }
@@ -68,6 +69,7 @@ model Post {
   likes          PostLike[]
   draft          Boolean          @default(false)
   createdAt      DateTime         @default(now())
+  bookmarks      Bookmark[]
 }
 
 model PostAttachment {
@@ -85,6 +87,15 @@ model PostLike {
   user   User   @relation(fields: [userId], references: [id])
   postId Int
   post   Post   @relation(fields: [postId], references: [id])
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model Comment {

@@ -7,6 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 
 import prisma from "@/lib/prisma";
+import { randomString } from "./utils";
 export const nextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -16,7 +17,17 @@ export const nextAuthOptions = {
       profile(profile: GoogleProfile, tokens): Awaitable<User> {
         // console.log("REGISTER PROFILE", profile);
         // return profile;
-        const username = profile.email.split("@")[0];
+        // const username = profile.email.split("@")[0];
+        // const username = randomString(15)
+        // let isExistUserName = true
+        // while (isExistUserName) {
+        //   const u = await this.userRepository.findOne({ where: { userName } });
+        //   if (!u) {
+        //     isExistUserName = false;
+        //     break;
+        //   }
+        //   userName += Math.random().toString(36).substring(2, 4);
+        // }
         return {
           id: profile?.sub,
           email: profile.email,
@@ -24,7 +35,7 @@ export const nextAuthOptions = {
           emailVerified: profile.email_verified,
           password: null,
           // createdAt: new Date(Date.now()),
-          username,
+          // username,
         } as User;
         // return {
         //   id: profile.
