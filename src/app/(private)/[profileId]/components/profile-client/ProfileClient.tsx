@@ -49,6 +49,26 @@ export const ProfileClient: FC<Props> = () => {
   if (isError) {
     return <div>error</div>;
   }
+  if (!user || !user.id) {
+    return (
+      <div className="w-full flex flex-col gap-4">
+        <div className="flex flex-col w-full">
+          <Skeleton className="w-full h-52" />
+          <div className="w-full flex items-end justify-between px-4 -mt-[4.5rem]">
+            <DefaultAvatar size={"large"} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 px-4">
+          <div className="w-full flex justify-center items-center flex-col max-w-sm mx-auto gap-2 px-4">
+            <span className="text-xl font-semibold text-center">This account doesn’t exist</span>
+            <span className="text-muted-foreground text-base text-center">
+              Try searching for another.
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex flex-col w-full">
@@ -82,12 +102,18 @@ export const ProfileClient: FC<Props> = () => {
           <span>Joined {dayjs(user?.createdAt as Date).format("MMMM YYYY")}</span>
         </div>
         <div className="flex gap-4 items-center text-sm">
-          <Link className="flex gap-1 hover:underline" href={"/" + params.profileId + "/following"}>
-            <span className="font-semibold">{user?._count.followers}</span>
+          <Link
+            className="flex gap-1 hover:border-black border-transparent border-b transition-colors !leading-4"
+            href={"/" + params.profileId + "/following"}
+          >
+            <span className="font-semibold">{user?._count?.followers}</span>
             <span className="text-muted-foreground">Following</span>
           </Link>
-          <Link className="flex gap-1 hover:underline" href={"/" + params.profileId + "/followers"}>
-            <span className="font-semibold">{user?._count.following}</span>
+          <Link
+            className="flex gap-1 hover:border-black border-transparent border-b transition-colors !leading-4"
+            href={"/" + params.profileId + "/followers"}
+          >
+            <span className="font-semibold">{user?._count?.following}</span>
             <span className="text-muted-foreground">Followers</span>
           </Link>
         </div>

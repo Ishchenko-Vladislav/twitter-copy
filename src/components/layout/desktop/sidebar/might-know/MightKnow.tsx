@@ -13,7 +13,9 @@ export const MightKnow: FC<Props> = () => {
       <div>
         {!isError &&
           !!users &&
-          users.map((user) => <User invalidateKey="/api/user" withInvalidate user={user} />)}
+          users.map((user) => (
+            <User key={user.id} invalidateKey="/api/user" withInvalidate user={user} />
+          ))}
       </div>
     </div>
   );

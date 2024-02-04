@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,12 +18,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { LuLoader2 } from "react-icons/lu";
 interface Props {}
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 });
 const LoginForm: FC<Props> = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { push } = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,6 +33,7 @@ const LoginForm: FC<Props> = (props) => {
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setIsLoading(true);
       const res = await signIn("credentials", {
         email: values.email,
         password: values.password,
@@ -45,6 +48,8 @@ const LoginForm: FC<Props> = (props) => {
       }
     } catch (error) {
       console.log("ERROR WHEN LOGIN", error);
+    } finally {
+      setIsLoading(false);
     }
     // console.log(values);
   }
@@ -79,8 +84,8 @@ const LoginForm: FC<Props> = (props) => {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">
-          Sign in
+        <Button disabled={isLoading} className="w-full" type="submit">
+          {isLoading ? <LuLoader2 className="animate-spin" /> : <span>Sign in</span>}
         </Button>
       </form>
     </Form>

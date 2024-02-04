@@ -14,54 +14,101 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const take = searchParams.get("take");
     const skip = searchParams.get("skip");
-
-    const marks = await prisma.user.findFirst({
-      where: { id: session.user.id },
-      select: {
+    const posts = await prisma.post.findMany({
+      where: {
         bookmarks: {
-          select: {
-            id: true,
+          some: {
+            userId: session.user.id,
           },
         },
       },
-    });
-    const ids = marks?.bookmarks.map((el) => el.id) ?? [];
-
-    const posts = await prisma.bookmark.findMany({
-      where: {
-        userId: session.user.id,
-      },
       include: {
-        post: {
-          include: {
-            attachments: true,
-            user: true,
-            likes: {
-              where: {
-                userId: session?.user.id,
-              },
-            },
-            bookmarks: {
-              where: {
-                userId: session?.user.id,
-              },
-            },
+        attachments: true,
+        user: {
+          select: {
+            avatar: true,
+            name: true,
+            id: true,
+            username: true,
             _count: {
               select: {
-                likes: true,
-                comments: true,
-                bookmarks: true,
+                following: true,
+                followers: true,
               },
             },
+          },
+        },
+        likes: {
+          where: {
+            userId: session?.user.id,
+          },
+        },
+        bookmarks: {
+          where: {
+            userId: session?.user.id,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+            bookmarks: true,
           },
         },
       },
       skip: skip ? +skip : 0,
       take: take ? +take : 5,
-      orderBy: {
-        createdAt: "desc",
-      },
+      // orderBy: {
+      //   createdAt: "desc",
+      // },
     });
+    // const marks = await prisma.user.findFirst({
+    //   where: { id: session.user.id },
+    //   select: {
+    //     bookmarks: {
+    //       select: {
+    //         id: true,
+    //       },
+    //     },
+    //   },
+    // });
+    // const ids = marks?.bookmarks.map((el) => el.id) ?? [];
+
+    // const posts = await prisma.bookmark.findMany({
+    //   where: {
+    //     userId: session.user.id,
+    //   },
+    //   include: {
+    //     post: {
+    //       include: {
+    //         attachments: true,
+    //         user: true,
+    //         likes: {
+    //           where: {
+    //             userId: session?.user.id,
+    //           },
+    //         },
+    //         bookmarks: {
+    //           where: {
+    //             userId: session?.user.id,
+    //           },
+    //         },
+    //         _count: {
+    //           select: {
+    //             likes: true,
+    //             comments: true,
+    //             bookmarks: true,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    //   skip: skip ? +skip : 0,
+    //   take: take ? +take : 5,
+    //   orderBy: {
+    //     createdAt: "desc",
+    //   },
+    // });
     return NextResponse.json(posts);
   } catch (error) {
     return NextResponse.json("Something went wrong. Try again!", {

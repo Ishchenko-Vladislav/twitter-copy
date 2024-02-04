@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { ButtonHTMLAttributes, FC, HTMLAttributes } from "react";
 import { FaBookmark, FaRegBookmark } from "react-icons/fa6";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { PostType } from "../post/Post";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   bookmarksCount: number;
@@ -20,16 +21,20 @@ export const Bookmark: FC<Props> = ({
         <TooltipTrigger asChild>
           <button
             {...attr}
-            className={cn("flex items-center group w-fit disabled:opacity-50", className)}
+            onBlur={() => {}}
+            className={cn("flex items-center group w-fit", className)}
           >
-            <div className="group-hover:text-blue-500 transition-colors w-8 h-8 flex justify-center items-center rounded-full group-hover:bg-blue-500/20">
+            <div className="h:group-hover:text-blue-500 t:group-active:text-blue-500 transition-colors w-8 h-8 flex justify-center items-center rounded-full h:group-hover:bg-blue-500/20 t:group-active:bg-blue-500/20">
               {isMarked ? <FaBookmark className="text-blue-500" /> : <FaRegBookmark />}
             </div>
             <div>
               <span
-                className={cn("group-hover:text-blue-500 transition-colors", {
-                  "text-blue-500": isMarked,
-                })}
+                className={cn(
+                  "h:group-hover:text-blue-500 t:group-active:text-blue-500 transition-colors",
+                  {
+                    "text-blue-500": isMarked,
+                  }
+                )}
               >
                 {bookmarksCount}
               </span>

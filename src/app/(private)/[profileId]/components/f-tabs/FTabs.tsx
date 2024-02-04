@@ -14,7 +14,7 @@ export const FTabs: FC<Props> = () => {
       <Link
         replace
         className={cn(
-          "h-full w-full flex justify-center items-center hover:bg-accent text-muted-foreground transition-colors",
+          "h-full w-full flex justify-center items-center h:hover:bg-accent t:active:bg-accent text-muted-foreground transition-colors",
           {
             "text-foreground": pathname === "/" + params.profileId + "/followers",
           }
@@ -33,7 +33,7 @@ export const FTabs: FC<Props> = () => {
       <Link
         replace
         className={cn(
-          "h-full w-full flex justify-center items-center hover:bg-accent text-muted-foreground transition-colors",
+          "h-full w-full flex justify-center items-center h:hover:bg-accent t:active:bg-accent text-muted-foreground transition-colors",
           {
             "text-foreground": pathname === "/" + params.profileId + "/following",
           }

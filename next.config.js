@@ -22,6 +22,25 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client", "bcrypt"],
   },
+  // webpack: (config) => {
+  //   config.module.rules.push({
+  //     test: /\.lottie$/,
+  //     use: [
+  //       {
+  //         loader: require.resolve("@svgr/webpack"),
+  //         options: {
+  //           svgoConfig: {
+  //             plugins: {
+  //               removeViewBox: false,
+  //             },
+  //           },
+  //         },
+  //       },
+  //     ],
+  //   });
+
+  //   return config;
+  // },
 };
 
 module.exports = nextConfig;

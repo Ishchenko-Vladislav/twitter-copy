@@ -23,76 +23,25 @@ export type BookmarkType = Prisma.BookmarkGetPayload<{
       };
     };
   };
-  // include: {
-  //     post: {
-  //       include: {
-  //         attachments: true,
-  //         user: true,
-  //         likes: {
-  //           where: {
-  //             userId: session?.user.id,
-  //           },
-  //         },
-  //         bookmarks: {
-  //           where: {
-  //             userId: session?.user.id,
-  //           },
-  //         },
-  //         _count: {
-  //           select: {
-  //             likes: true,
-  //             comments: true,
-  //             bookmarks: true,
-  //           },
-  //         },
-  //       },
-
-  //     },
-  //   },
 }>;
 
-// include: {
-//     post: {
-//       include: {
-//         attachments: true,
-//         user: true,
-//         likes: {
-//           where: {
-//             userId: session?.user.id,
-//           },
-//         },
-//         bookmarks: {
-//           where: {
-//             userId: session?.user.id,
-//           },
-//         },
-//         _count: {
-//           select: {
-//             likes: true,
-//             comments: true,
-//             bookmarks: true,
-//           },
-//         },
-//       },
-//     },
-//   },
 interface Props {}
 
 export const Client: FC<Props> = () => {
-  const { data, setSize, size, isReachedEnd, isLoading } =
-    useInfinityLoad<BookmarkType>("/api/post/bookmark");
+  const { data, setSize, size, isReachedEnd, isLoading, invalidate } =
+    useInfinityLoad<PostType>("/api/post/bookmark");
   console.log("BOOKMARKS", data);
   return (
     <InfiniteScroll
-      className="flex-1 w-full"
+      className="flex-1 w-full pb-20"
       loader={<Loader />}
       next={() => setSize(size + 1)}
       hasMore={!isReachedEnd}
       dataLength={data.length ?? 0}
+      endMessage={<div className="py-40"></div>}
     >
-      {/* <span></span> */}
       {data && data.length > 0 ? (
-        data.map((el) => <Post key={el.id} {...el.post} />)
+        data.map((el) => <Post invalidate={invalidate} key={el.id} {...el} />)
       ) : isReachedEnd && data && data.length === 0 ? (
         <div className="w-full flex justify-center items-center flex-col max-w-sm mx-auto gap-2 px-4">
           <span className="text-xl font-semibold text-center">

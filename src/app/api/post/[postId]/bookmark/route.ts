@@ -23,7 +23,7 @@ export async function POST(req: Request, { params }: { params: { postId: string 
           id: bookmarkExist.id,
         },
       });
-      return NextResponse.json({ isMarked: false, bookmark: null });
+      return NextResponse.json({ status: "ok", isMarked: false, bookmark: null });
     } else {
       const bookmark = await prisma.bookmark.create({
         data: {
@@ -32,14 +32,21 @@ export async function POST(req: Request, { params }: { params: { postId: string 
         },
       });
       return NextResponse.json({
+        status: "ok",
         bookmark,
         isMarked: true,
       });
     }
     // return NextResponse.json({ postId });
   } catch (error) {
-    return NextResponse.json("Something went wrong. Try again!", {
-      status: 400,
-    });
+    return NextResponse.json(
+      {
+        status: "error",
+        message: "Something went wrong. Try again!",
+      },
+      {
+        status: 400,
+      }
+    );
   }
 }

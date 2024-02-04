@@ -25,6 +25,8 @@ const config = {
     extend: {
       screens: {
         xs: "500px",
+        h: { raw: "(hover: hover)" },
+        t: { raw: "(hover: none)" },
       },
       maxWidth: {
         "default-main": "600px",

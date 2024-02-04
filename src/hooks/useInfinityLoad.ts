@@ -9,7 +9,29 @@ export const useInfinityLoad = <T>(url: string) => {
     if (previousPageData && !previousPageData.length) return null;
     return `${url}?take=${TAKE}&skip=${TAKE * pageIndex}`;
   };
-  const { data: d, size, setSize } = useSWRInfinity<T[]>(getKey, fetcher);
+  const {
+    data: d,
+    size,
+    setSize,
+    mutate,
+  } = useSWRInfinity<T[]>(getKey, fetcher, {
+    // revalidateOnMount: true,
+  });
+
+  const invalidate = (obj: T) => {
+    if (!d) return;
+    const filtered = d.map((page) =>
+      page.map((item) => {
+        //@ts-ignore
+        if (item?.id === obj?.id) {
+          return obj;
+        } else return item;
+      })
+    );
+    mutate(filtered, {
+      revalidate: false,
+    });
+  };
   const data = useMemo(() => {
     return d?.flat() ?? [];
   }, [d]);
@@ -21,5 +43,6 @@ export const useInfinityLoad = <T>(url: string) => {
     isLoading,
     size,
     setSize,
+    invalidate,
   };
 };

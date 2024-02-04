@@ -8,6 +8,7 @@ import React, { FC } from "react";
 // import useSWRMutation from "swr/mutation";
 import { Loader2 } from "lucide-react";
 import { useSWRConfig } from "swr";
+import { useSession } from "next-auth/react";
 // interface Tr exted
 interface Props extends ButtonProps {
   profileId: string;
@@ -25,12 +26,14 @@ export const FollowButton: FC<Props> = ({
   ...attr
 }) => {
   //   const { data, error } = useFollowing();
+  const session = useSession();
   const { toggleFollow, isFollow, isLoading } = useFollow(profileId as string, {
     withInvalidate,
     invalidateKey,
     onSuccess,
   });
 
+  if (profileId === session.data?.user.id) return null;
   return (
     <Button
       onClick={toggleFollow}

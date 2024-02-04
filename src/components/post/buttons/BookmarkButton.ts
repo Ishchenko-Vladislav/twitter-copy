@@ -1,44 +1,78 @@
-import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
+import { MouseEvent, useState } from "react";
 import { PostType } from "../Post";
+import { useSession } from "next-auth/react";
 interface IBookmarkButton {
-  postId: string | number;
-  setData: Dispatch<SetStateAction<PostType>>;
+  postId: any;
+  post: PostType;
+  invalidate?: (t: PostType) => void;
 }
-export const useBookmarkButton = ({ postId, setData }: IBookmarkButton) => {
+export const useBookmarkButton = ({ invalidate, postId, post }: IBookmarkButton) => {
   const [isLoading, setIsLoading] = useState(false);
+  const session = useSession();
   const bookmarkHandle = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     try {
       setIsLoading(true);
-      const res = await fetch(`/api/post/${postId}/bookmark`, {
+      if (invalidate) {
+        invalidate({
+          ...post,
+          bookmarks:
+            post.bookmarks.length === 0
+              ? [
+                  {
+                    id: 1,
+                    postId,
+                    userId: session.data?.user.id ?? "dd",
+                    createdAt: new Date(),
+                  },
+                ]
+              : [],
+          _count: {
+            ...post._count,
+            bookmarks:
+              post.bookmarks.length === 0 ? post._count.bookmarks + 1 : post._count.bookmarks - 1,
+          },
+        });
+      }
+      await fetch(`/api/post/${postId}/bookmark`, {
         method: "POST",
       }).then((res) => res.json());
-      if (res.isMarked) {
-        setData((prev) => ({
-          ...prev,
-          bookmarks: [res.bookmark],
-          _count: {
-            ...prev._count,
-            bookmarks: ++prev._count.bookmarks,
-          },
-        }));
-      } else {
-        setData((prev) => ({
-          ...prev,
-          bookmarks: [],
-          _count: {
-            ...prev._count,
-            bookmarks: --prev._count.bookmarks,
-          },
-        }));
-      }
+      // if (invalidate) {
+      //   invalidate({
+      //     ...post,
+      //     bookmarks: res.isMarked ? [res.bookmark] : [],
+      //     _count: {
+      //       ...post._count,
+      //       bookmarks: res.isMarked ? post._count.bookmarks + 1 : post._count.bookmarks - 1,
+      //     },
+      //   });
+      // }
     } catch (error) {
-      console.log(error);
+      if (invalidate) {
+        invalidate({
+          ...post,
+          bookmarks:
+            post.bookmarks.length === 0
+              ? [
+                  {
+                    id: 1,
+                    postId,
+                    userId: session.data?.user.id ?? "dd",
+                    createdAt: new Date(),
+                  },
+                ]
+              : [],
+          _count: {
+            ...post._count,
+            bookmarks:
+              post.bookmarks.length === 0 ? post._count.bookmarks + 1 : post._count.bookmarks - 1,
+          },
+        });
+      }
     } finally {
       setIsLoading(false);
     }
   };
-
   return {
     isLoading,
     bookmarkHandle,

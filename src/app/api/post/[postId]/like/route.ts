@@ -1,13 +1,24 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-export async function POST(req: Request, { params }: { params: { postId: string } }) {
+import { BaseResponse } from "@/lib/interface";
+import { PostLike } from "@prisma/client";
+export interface LikeResponse extends BaseResponse {
+  data?: {
+    like: PostLike;
+    isLiked: true;
+  };
+}
+export async function POST(
+  req: Request,
+  { params }: { params: { postId: string } }
+): Promise<NextResponse<LikeResponse>> {
   try {
     const postId = +params.postId;
     const session = await auth();
     if (!session?.user.id) {
       return NextResponse.json({
-        isError: true,
+        success: false,
         message: "You should be logged in.",
       });
     }
@@ -23,7 +34,10 @@ export async function POST(req: Request, { params }: { params: { postId: string 
           id: likeExist.id,
         },
       });
-      return NextResponse.json({ isLiked: false, like: null });
+      return NextResponse.json({
+        success: true,
+        message: "",
+      });
     } else {
       const like = await prisma.postLike.create({
         data: {
@@ -32,14 +46,19 @@ export async function POST(req: Request, { params }: { params: { postId: string 
         },
       });
       return NextResponse.json({
-        like,
-        isLiked: true,
+        success: true,
+        message: "",
       });
     }
-    // return NextResponse.json({ postId });
   } catch (error) {
-    return NextResponse.json("Something went wrong. Try again!", {
-      status: 400,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Something went wrong. Try again!",
+      },
+      {
+        status: 400,
+      }
+    );
   }
 }

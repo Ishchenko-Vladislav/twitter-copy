@@ -15,7 +15,7 @@ import { IoClose } from "react-icons/io5";
 import { LuLoader, LuLoader2 } from "react-icons/lu";
 interface Props {}
 
-export const CreatePost: FC<Props> = () => {
+const CreatePost: FC<Props> = () => {
   // const [text, setText]
   const { data } = useSession();
   const {
@@ -133,3 +133,4 @@ export const CreatePost: FC<Props> = () => {
     </div>
   );
 };
+export default CreatePost;

@@ -1,5 +1,5 @@
 "use client";
-import { SimpleHeader } from "@/components/ui/SimpleHeader";
+import { SimpleHeader } from "@/components/headers/SimpleHeader";
 import { useUser } from "@/hooks/user/useUser";
 import { FC } from "react";
 

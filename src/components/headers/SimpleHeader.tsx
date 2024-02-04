@@ -2,22 +2,33 @@
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { Skeleton } from "./skeleton";
+import { Skeleton } from "../ui/skeleton";
+import { cn } from "@/lib/utils";
 interface Props {
   title: string;
   withArrow?: boolean;
+  arrowCondition?: string;
   desc?: string | null;
   isLoading?: boolean;
 }
 
-export const SimpleHeader: FC<Props> = ({ title, isLoading, withArrow = false, desc = null }) => {
+export const SimpleHeader: FC<Props> = ({
+  title,
+  isLoading,
+  withArrow = false,
+  desc = null,
+  arrowCondition = "",
+}) => {
   const { back } = useRouter();
   return (
     <div className="w-full sticky top-0 h-12 bg-background/80 z-10 backdrop-blur-sm flex items-center gap-2 px-4">
       {withArrow ? (
         <button
           onClick={back}
-          className="w-8 h-8 rounded-full flex justify-center items-center hover:bg-gray-300 transition-colors"
+          className={cn(
+            "w-8 h-8 rounded-full flex justify-center items-center h:hover:bg-gray-300 t:active:bg-gray-300 transition-colors",
+            arrowCondition
+          )}
         >
           <IoArrowBackOutline />
         </button>

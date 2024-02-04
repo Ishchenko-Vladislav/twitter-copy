@@ -20,7 +20,20 @@ export async function GET(req: NextRequest, { params }: { params: { userId: stri
         userId: params.userId,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            avatar: true,
+            name: true,
+            id: true,
+            username: true,
+            _count: {
+              select: {
+                following: true,
+                followers: true,
+              },
+            },
+          },
+        },
         attachments: true,
         likes: {
           where: {

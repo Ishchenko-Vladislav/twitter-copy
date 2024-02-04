@@ -1,4 +1,4 @@
-import { SimpleHeader } from "@/components/ui/SimpleHeader";
+import { SimpleHeader } from "@/components/headers/SimpleHeader";
 import { PropsWithChildren } from "react";
 import { ProfileClient } from "../components/profile-client/ProfileClient";
 import { TabsProfile } from "../components/tabs-profile/TabsProfile";

@@ -1,26 +1,34 @@
 "use client";
 import type { Prisma } from "@prisma/client";
-import Link from "next/link";
-import { FC, MouseEvent, MouseEventHandler, useState } from "react";
+import { FC, useState } from "react";
 import { DefaultAvatar } from "../ui/avatar";
 import { useRouter } from "next/navigation";
-import dayjs from "dayjs";
-import isToday from "dayjs/plugin/isToday";
-import relativeTime from "dayjs/plugin/relativeTime";
-import updateLocale from "dayjs/plugin/updateLocale";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { local } from "@/lib/local";
 import { Like } from "../ui/like";
 import { Comment } from "../ui/comment";
 import { Bookmark } from "../ui/bookmark";
-import { useSession } from "next-auth/react";
 import { useLikeButton } from "./buttons/LikeButton";
 import { useBookmarkButton } from "./buttons/BookmarkButton";
+import { HoverCardUserInfo } from "../user/User";
 
 export type PostType = Prisma.PostGetPayload<{
   include: {
-    user: true;
+    user: {
+      select: {
+        avatar: true;
+        name: true;
+        id: true;
+        username: true;
+        _count: {
+          select: {
+            following: true;
+            followers: true;
+          };
+        };
+      };
+    };
     attachments: true;
     likes: true;
     bookmarks: true;
@@ -33,39 +41,94 @@ export type PostType = Prisma.PostGetPayload<{
     };
   };
 }>;
-interface Props extends PostType {}
+interface Props extends PostType {
+  invalidate?: (t: PostType) => void;
+}
 
-export const Post: FC<Props> = (props) => {
-  const [data, setData] = useState({ ...props });
+export const Post: FC<Props> = ({ invalidate, ...data }) => {
+  const [count, setCount] = useState({ ...data.user!._count });
+
   const { push } = useRouter();
-  const session = useSession();
   const handlePush = () => {
     push("/");
   };
   const isToday = local(data.createdAt).isToday();
-  const { isLoading: isLoadingLike, likeHandle } = useLikeButton({ postId: data.id, setData });
+  const { isLoading: isLoadingLike, likeHandle } = useLikeButton({
+    postId: data.id,
+    post: data,
+    invalidate,
+  });
   const { isLoading: isLoadingBookmark, bookmarkHandle } = useBookmarkButton({
     postId: data.id,
-    setData,
+    post: data,
+    invalidate,
   });
   const onClick = (e: any) => {
     e.stopPropagation();
   };
+
+  const onSuccessFollow = (isFollow: boolean) => {
+    if (isFollow) {
+      setCount((prev) => ({
+        ...prev,
+        following: prev.following + 1,
+      }));
+    } else {
+      setCount((prev) => ({
+        ...prev,
+        following: prev.following - 1,
+      }));
+    }
+  };
   return (
     <div
       onClick={handlePush}
-      className="w-full flex border-b border-border flex-row gap-2 py-2 px-4 hover:bg-accent relative cursor-pointer"
+      className="w-full max-w-[100dvw] flex border-b border-border overflow-hidden flex-row gap-2 py-2 px-4 hover:bg-accent relative cursor-pointer"
     >
-      <DefaultAvatar src={data.user?.avatar ?? ""} />
-      <div className="flex flex-col gap-2 w-full">
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center gap-2 text-sm">
-            <span className="font-semibold">{data.user?.name}</span>
-            <span className="text-muted-foreground">@{data.user?.username}</span>
-            <span>•</span>
-            <span>
-              {isToday ? local(data.createdAt).fromNow() : local(data.createdAt).format("MMM D")}
-            </span>
+      <HoverCardUserInfo
+        onSuccessFollow={onSuccessFollow}
+        user={
+          data.user
+            ? {
+                ...data.user,
+                _count: count,
+              }
+            : null
+        }
+      >
+        <DefaultAvatar src={data.user?.avatar ?? ""} />
+      </HoverCardUserInfo>
+      <div className="flex flex-col gap-2 w-full overflow-hidden">
+        <div className="flex flex-col w-full">
+          <div className="flex flex-row items-center gap-1 xs:gap-2 text-sm flex-nowrap w-full">
+            <HoverCardUserInfo
+              onSuccessFollow={onSuccessFollow}
+              user={
+                data.user
+                  ? {
+                      ...data.user,
+                      _count: count,
+                    }
+                  : null
+              }
+            >
+              <div className="w-full truncate overflow-hidden max-w-fit">
+                <span className="font-semibold whitespace-nowrap">{data.user?.name}</span>
+              </div>
+            </HoverCardUserInfo>
+            <div className="w-fit overflow-hidden truncate">
+              <span className="text-muted-foreground whitespace-nowrap">
+                @{data.user?.username}
+              </span>
+            </div>
+            <div className="overflow-hidden ">
+              <span className="">•</span>
+            </div>
+            <div className="min-w-fit overflow-hidden">
+              <span className="whitespace-nowrap text-muted-foreground">
+                {isToday ? local(data.createdAt).fromNow() : local(data.createdAt).format("MMM D")}
+              </span>
+            </div>
           </div>
           <div>
             <span

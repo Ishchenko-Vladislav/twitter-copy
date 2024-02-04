@@ -1,7 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+body {
+  overflow-y: scroll;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -56,4 +58,16 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+.like-button path {
+  transition: all 0.1s;
+}
+
+@media (hover: hover) {
+  .like-button:hover path {
+    fill: #ff2c76;
+  }
+}
+
+@media (hover: none) {
 }

@@ -43,6 +43,7 @@ const page = ({ params }: Props) => {
       next={() => setSize(size + 1)}
       hasMore={!isReachedEnd}
       dataLength={data.length ?? 0}
+      endMessage={<div className="py-40"></div>}
     >
       {data && data.length > 0 ? (
         data.map((el) => <FFollowing key={el.id} {...el} />)

@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { LuLoader2 } from "react-icons/lu";
 interface Props {}
 const formSchema = z.object({
   email: z.string().email(),
@@ -25,6 +26,8 @@ const formSchema = z.object({
   name: z.string().min(5).max(40),
 });
 const RegisterForm: FC<Props> = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { push } = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -33,6 +36,7 @@ const RegisterForm: FC<Props> = (props) => {
   });
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setIsLoading(true);
       await fetch("/api/auth/register", {
         method: "POST",
         body: JSON.stringify(values),
@@ -46,6 +50,8 @@ const RegisterForm: FC<Props> = (props) => {
       push("/");
     } catch (error) {
       console.log("error when register", error);
+    } finally {
+      setIsLoading(true);
     }
     // console.log(values);
   }
@@ -107,8 +113,8 @@ const RegisterForm: FC<Props> = (props) => {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">
-          Create an account
+        <Button disabled={isLoading} className="w-full" type="submit">
+          {isLoading ? <LuLoader2 className="animate-spin" /> : <span>Create an account</span>}
         </Button>
       </form>
     </Form>
