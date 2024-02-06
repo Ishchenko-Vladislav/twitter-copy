@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useSession } from "next-auth/react";
 import { FC, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
+// import { Progress } from "./progress/Progress";
 import { useCreatePost } from "@/hooks/post/useCreatePost";
 import { FaRegImage } from "react-icons/fa6";
 import Image from "next/image";
@@ -13,22 +14,23 @@ import { X } from "lucide-react";
 import { IoClose } from "react-icons/io5";
 import { LuLoader, LuLoader2 } from "react-icons/lu";
 import { Progress } from "@/components/ui/Progress";
+import { useCreateComment } from "@/hooks/post/useCreateComment";
 interface Props {}
 
-const CreatePost: FC<Props> = () => {
+export const CreateComment: FC<Props> = () => {
   // const [text, setText]
   const { data } = useSession();
   const {
     text,
     setText,
-    isPendingPost,
+    isPendingComment,
     isDisabledButton,
     accept,
     attachments,
     uploadFile,
     remove,
-    sendPost,
-  } = useCreatePost();
+    sendComment,
+  } = useCreateComment();
   return (
     <div className="w-full pb-4 pt-2 border-b border-border">
       <div className="w-full flex items-start gap-2 px-4">
@@ -39,7 +41,7 @@ const CreatePost: FC<Props> = () => {
               value={text}
               onChange={(e) => setText(e.target.value)}
               className="w-full resize-none py-1 focus-within:outline-none outline-none"
-              placeholder="What is happening?!"
+              placeholder="Post your reply"
               maxLength={500}
             />
           </div>
@@ -114,16 +116,16 @@ const CreatePost: FC<Props> = () => {
             <div className="flex items-center gap-2">
               <Progress currentCount={text.length} maxCount={500} />
               <Button
-                onClick={() => sendPost()}
-                disabled={isDisabledButton || isPendingPost}
+                onClick={() => sendComment()}
+                disabled={isDisabledButton || isPendingComment}
                 className="rounded-full disabled:opacity-50"
               >
-                {isPendingPost ? (
+                {isPendingComment ? (
                   <div>
                     <LuLoader2 className="animate-spin" />
                   </div>
                 ) : (
-                  <span>Post</span>
+                  <span>Reply</span>
                 )}
               </Button>
             </div>
@@ -133,4 +135,3 @@ const CreatePost: FC<Props> = () => {
     </div>
   );
 };
-export default CreatePost;

@@ -21,7 +21,7 @@ export const SimpleHeader: FC<Props> = ({
 }) => {
   const { back } = useRouter();
   return (
-    <div className="w-full sticky top-0 h-12 bg-background/80 z-10 backdrop-blur-sm flex items-center gap-2 px-4">
+    <div className="w-full sticky top-0 h-12 bg-background/80 z-20 backdrop-blur-sm flex items-center gap-2 px-4">
       {withArrow ? (
         <button
           onClick={back}

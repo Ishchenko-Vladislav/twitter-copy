@@ -2,7 +2,7 @@ import { DefaultAvatar } from "@/components/ui/avatar";
 import { User } from "@/components/user/User";
 import Link from "next/link";
 import { FC } from "react";
-import { FollowingType } from "../../(f)/following/page";
+import { FollowingType } from "../../../(f)/following/page";
 
 type Props = {
   recipient: {

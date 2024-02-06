@@ -1,14 +1,21 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-export async function POST(req: Request, { params }: { params: { postId: string } }) {
+import { BaseResponse } from "@/lib/interface";
+export interface BookmarkResponse extends BaseResponse<any> {}
+
+export async function POST(
+  req: Request,
+  { params }: { params: { postId: string } }
+): Promise<NextResponse<BookmarkResponse>> {
   try {
     const postId = +params.postId;
     const session = await auth();
     if (!session?.user.id) {
       return NextResponse.json({
-        isError: true,
+        success: false,
         message: "You should be logged in.",
+        data: null,
       });
     }
     const bookmarkExist = await prisma.bookmark.findFirst({
@@ -23,7 +30,7 @@ export async function POST(req: Request, { params }: { params: { postId: string 
           id: bookmarkExist.id,
         },
       });
-      return NextResponse.json({ status: "ok", isMarked: false, bookmark: null });
+      return NextResponse.json({ success: true, data: null, message: "" });
     } else {
       const bookmark = await prisma.bookmark.create({
         data: {
@@ -32,17 +39,18 @@ export async function POST(req: Request, { params }: { params: { postId: string 
         },
       });
       return NextResponse.json({
-        status: "ok",
-        bookmark,
-        isMarked: true,
+        success: true,
+        data: null,
+        message: "",
       });
     }
     // return NextResponse.json({ postId });
   } catch (error) {
     return NextResponse.json(
       {
-        status: "error",
+        success: false,
         message: "Something went wrong. Try again!",
+        data: null,
       },
       {
         status: 400,

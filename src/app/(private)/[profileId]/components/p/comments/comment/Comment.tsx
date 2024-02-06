@@ -1,73 +1,25 @@
-"use client";
-import type { Prisma } from "@prisma/client";
-import { FC, useState } from "react";
-import { DefaultAvatar } from "../ui/avatar";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { TComment } from "@/app/api/post/[postId]/comment/route";
+import { DefaultAvatar } from "@/components/ui/avatar";
+import { Like } from "@/components/ui/like";
+import { Time } from "@/components/ui/time";
+import { HoverCardUserInfo } from "@/components/user/User";
 import { local } from "@/lib/local";
-import { Like } from "../ui/like";
-import { Comment } from "../ui/comment";
-import { Bookmark } from "../ui/bookmark";
-import { useLikeButton } from "./buttons/LikeButton";
-import { useBookmarkButton } from "./buttons/BookmarkButton";
-import { HoverCardUserInfo } from "../user/User";
-import { Time } from "../ui/time";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { FC, useState } from "react";
+import { useCommentLike } from "./useCommentLike";
 
-export type PostType = Prisma.PostGetPayload<{
-  include: {
-    user: {
-      select: {
-        avatar: true;
-        name: true;
-        id: true;
-        username: true;
-        _count: {
-          select: {
-            following: true;
-            followers: true;
-          };
-        };
-      };
-    };
-    attachments: true;
-    likes: true;
-    bookmarks: true;
-    _count: {
-      select: {
-        comments: true;
-        likes: true;
-        bookmarks: true;
-      };
-    };
-  };
-}>;
-interface Props extends PostType {
-  invalidate?: (t: PostType) => void;
+interface Props extends TComment {
+  invalidate?: (t: TComment) => void;
 }
 
-export const Post: FC<Props> = ({ invalidate, ...data }) => {
+export const Comment: FC<Props> = ({ invalidate, ...data }) => {
   const [count, setCount] = useState({ ...data.user!._count });
-
-  const { push } = useRouter();
-  const handlePush = () => {
-    push("/" + data.userId + "/status/" + data.id);
-  };
+  const { likeHandle, isLoading } = useCommentLike({
+    invalidate: invalidate,
+    comment: data,
+  });
   const isToday = local(data.createdAt).isToday();
-  const { isLoading: isLoadingLike, likeHandle } = useLikeButton({
-    postId: data.id,
-    post: data,
-    invalidate,
-  });
-  const { isLoading: isLoadingBookmark, bookmarkHandle } = useBookmarkButton({
-    postId: data.id,
-    post: data,
-    invalidate,
-  });
-  const onClick = (e: any) => {
-    e.stopPropagation();
-  };
-
   const onSuccessFollow = (isFollow: boolean) => {
     if (isFollow) {
       setCount((prev) => ({
@@ -81,13 +33,14 @@ export const Post: FC<Props> = ({ invalidate, ...data }) => {
       }));
     }
   };
+
   return (
     <div
-      onClick={handlePush}
-      className="w-full max-w-[100dvw] border-b border-border flex flex-row gap-2 overflow-hidden py-2 px-4 hover:bg-accent relative cursor-pointer"
+      //   onClick={handlePush}
+      className="w-full max-w-[100dvw] flex border-b border-border overflow-hidden flex-row gap-2 py-2 px-4 hover:bg-accent relative cursor-pointer"
     >
       <HoverCardUserInfo
-        onSuccessFollow={onSuccessFollow}
+        // onSuccessFollow={onSuccessFollow}
         asChild
         user={
           data.user
@@ -103,8 +56,8 @@ export const Post: FC<Props> = ({ invalidate, ...data }) => {
         </button>
       </HoverCardUserInfo>
       <div className="flex flex-col gap-2 max-w-[calc(100%-2.5rem)]">
-        <div className="flex flex-col w-full overflow-hidden">
-          <div className="flex flex-row items-center gap-1 xs:gap-2 text-sm flex-nowrap w-full overflow-hidden ">
+        <div className="flex flex-col w-full">
+          <div className="flex flex-row items-center gap-1 xs:gap-2 text-sm flex-nowrap w-full">
             <HoverCardUserInfo
               onSuccessFollow={onSuccessFollow}
               user={
@@ -143,7 +96,7 @@ export const Post: FC<Props> = ({ invalidate, ...data }) => {
               style={{
                 wordBreak: "break-word",
               }}
-              className="text-sm line-clamp-4 text-ellipsis whitespace-pre-wrap"
+              className="text-sm whitespace-pre-wrap"
             >
               {data.text}
             </span>
@@ -201,21 +154,21 @@ export const Post: FC<Props> = ({ invalidate, ...data }) => {
             : null}
         </div>
         <div className="grid grid-cols-4 w-full -ml-2">
-          <div onClick={onClick}>
-            <Comment commentsCount={data._count.comments} />
-          </div>
+          {/* <div onClick={onClick}>
+        <Comment commentsCount={data._count.} />
+      </div> */}
           <Like
-            disabled={isLoadingLike}
+            disabled={isLoading}
             onClick={likeHandle}
             isLiked={!!data.likes.length}
             likesCount={data._count.likes}
           />
-          <Bookmark
-            disabled={isLoadingBookmark}
-            onClick={bookmarkHandle}
-            isMarked={!!data.bookmarks.length}
-            bookmarksCount={data._count.bookmarks}
-          />
+          {/* <Bookmark
+        disabled={isLoadingBookmark}
+        onClick={bookmarkHandle}
+        isMarked={!!data.bookmarks.length}
+        bookmarksCount={data._count.bookmarks}
+      /> */}
         </div>
       </div>
     </div>

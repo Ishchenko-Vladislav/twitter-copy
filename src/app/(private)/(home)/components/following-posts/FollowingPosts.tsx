@@ -13,7 +13,7 @@ export const FollowingPosts: FC<Props> = () => {
 
   return (
     <InfiniteScroll
-      className="flex-1 w-full pb-20"
+      className="flex-1 w-full pb-20 max-w-[600px]"
       loader={<Loader />}
       next={() => setSize(size + 1)}
       hasMore={!isReachedEnd}

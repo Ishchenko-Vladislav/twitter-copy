@@ -4,7 +4,7 @@ import { useInfinityLoad } from "@/hooks/useInfinityLoad";
 import { Prisma } from "@prisma/client";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { FFollowers } from "../../components/f-followers/FFollowers";
+import { FFollowers } from "../../components/f/f-followers/FFollowers";
 export type FollowersType = Prisma.FollowsGetPayload<{
   include: {
     user: {

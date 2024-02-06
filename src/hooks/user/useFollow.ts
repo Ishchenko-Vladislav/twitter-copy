@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { useFollowing } from "./useFollowing";
-import { useSWRConfig } from "swr";
+import { useSWRConfig, mutate as mm } from "swr";
 
 //   return {
 //     user: data,
@@ -78,6 +78,7 @@ export const useFollow = (
     } catch (error) {
     } finally {
       setIsLoading(false);
+      mm("/api/user");
     }
   };
 

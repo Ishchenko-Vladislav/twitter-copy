@@ -18,3 +18,11 @@ export function randomString(length: number) {
   }
   return result;
 }
+
+export const getMessageFromError = (error: any) => {
+  return typeof error === "string"
+    ? error
+    : "message" in error
+    ? error.message
+    : "Something went wrong. Try again!!!!!";
+};

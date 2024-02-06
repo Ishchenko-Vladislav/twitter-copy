@@ -4,12 +4,16 @@ import { ICreatePostDTO } from "@/app/api/post/route";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import useSWRInfinity from "swr/infinite";
+import { mutate as mm } from "swr";
 
 import { PostType } from "@/components/post/Post";
 import { fetcher, getMessageFromError } from "@/lib/utils";
-export const useCreatePost = () => {
+import { CommentResponse, ICreateCommentDTO } from "@/app/api/post/[postId]/comment/route";
+import { useParams } from "next/navigation";
+export const useCreateComment = () => {
   const [text, setText] = useState("");
-  const [isPendingPost, setIsPendingPost] = useState(false);
+  const params = useParams();
+  const [isPendingComment, setIsPendingPost] = useState(false);
   const { data } = useSession();
   const { uploadFile, accept, attachments, isLoading, remove, clear } = useUploadFile({
     multiply: true,
@@ -20,7 +24,7 @@ export const useCreatePost = () => {
     const TAKE = 10;
 
     if (previousPageData && !previousPageData.length) return null;
-    return `/api/post?take=${TAKE}&skip=${TAKE * pageIndex}`;
+    return `/api/post/${params.postId}/comment?take=${TAKE}&skip=${TAKE * pageIndex}`;
   };
   const { data: d, mutate } = useSWRInfinity(getKey, fetcher, {
     revalidateOnFocus: false,
@@ -34,10 +38,10 @@ export const useCreatePost = () => {
     else return false;
   }, [text, attachments]);
 
-  const sendPost = async () => {
+  const sendComment = async () => {
     try {
       setIsPendingPost(true);
-      const dto: ICreatePostDTO = {
+      const dto: ICreateCommentDTO = {
         attachments: attachments.map((el) => ({
           publicId: el.public_id,
           type: el.resource_type as any,
@@ -46,16 +50,19 @@ export const useCreatePost = () => {
         text,
         userId: data?.user.id,
       };
-      const res: PostType = await fetch("/api/post", {
+      const res: CommentResponse = await fetch(`/api/post/${params.postId}/comment`, {
         method: "POST",
         body: JSON.stringify(dto),
       }).then((res) => res.json());
-
-      const filteredData = d && res.id ? [res, ...d?.map((el) => el)] : d;
+      console.log("COMMENT --", res);
+      if (!res.success) {
+        return toast.error(res.message);
+      }
+      const filteredData = d && [res.data, ...d];
       mutate(filteredData, { revalidate: false });
+      mm(`/api/post/${params.postId}`);
       setText("");
       clear();
-      return res;
     } catch (error) {
       const message = getMessageFromError(error);
       toast.error(message);
@@ -71,8 +78,8 @@ export const useCreatePost = () => {
     isLoading,
     uploadFile,
     remove,
-    sendPost,
+    sendComment,
     isDisabledButton,
-    isPendingPost,
+    isPendingComment,
   };
 };

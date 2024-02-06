@@ -6,9 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -23,12 +23,12 @@ model User {
   followers     Follows[]     @relation("following")
   following     Follows[]     @relation("followers")
   posts         Post[]
+  comments      Comment[]
   accounts      Account[]
   postLike      PostLike[]
   commentLike   CommentLike[]
   bookmarks     Bookmark[]
   createdAt     DateTime?     @default(now())
-  // sessions      Session[]
 }
 
 model Account {
@@ -102,6 +102,9 @@ model Comment {
   id          Int                 @id @default(autoincrement())
   postId      Int
   post        Post                @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId      String?
+  text        String?             @db.VarChar(500)
+  user        User?               @relation(fields: [userId], references: [id], onUpdate: SetNull, onDelete: Cascade)
   attachments CommentAttachment[]
   likes       CommentLike[]
   createdAt   DateTime            @default(now())

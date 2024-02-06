@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren } from "react";
-import { FHeader } from "../components/f-header/FHeader";
-import { FTabs } from "../components/f-tabs/FTabs";
+import { FHeader } from "../components/f/f-header/FHeader";
+import { FTabs } from "../components/f/f-tabs/FTabs";
 interface Props {
   params: {
     profileId: string;

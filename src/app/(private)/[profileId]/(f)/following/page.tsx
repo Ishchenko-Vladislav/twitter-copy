@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useSWR from "swr";
-import { FFollowing } from "../../components/f-following/FFollowing";
+import { FFollowing } from "../../components/f/f-following/FFollowing";
 export type FollowingType = Prisma.FollowsGetPayload<{
   include: {
     recipient: {
