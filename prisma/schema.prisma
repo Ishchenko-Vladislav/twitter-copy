@@ -12,23 +12,25 @@ datasource db {
 }
 
 model User {
-  id            String        @id @default(uuid())
-  username      String        @unique @default(dbgenerated("uuid_generate_v1()"))
-  email         String        @unique
+  id            String         @id @default(uuid())
+  username      String         @unique @default(dbgenerated("uuid_generate_v1()"))
+  email         String         @unique
   name          String?
   password      String?
   avatar        String?
   bg            String?
-  emailVerified Boolean?      @default(false)
-  followers     Follows[]     @relation("following")
-  following     Follows[]     @relation("followers")
+  emailVerified Boolean?       @default(false)
+  followers     Follows[]      @relation("following")
+  following     Follows[]      @relation("followers")
   posts         Post[]
   comments      Comment[]
   accounts      Account[]
   postLike      PostLike[]
   commentLike   CommentLike[]
   bookmarks     Bookmark[]
-  createdAt     DateTime?     @default(now())
+  createdAt     DateTime?      @default(now())
+  conversations Conversation[]
+  messages      Message[]
 }
 
 model Account {
@@ -125,6 +127,32 @@ model CommentLike {
   user      User    @relation(fields: [userId], references: [id])
   commentId Int
   comment   Comment @relation(fields: [commentId], references: [id])
+}
+
+model Conversation {
+  id        Int              @id @default(autoincrement())
+  member    User[]
+  type      ConversationType
+  messages  Message[]
+  // lastMessageSendId Int?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model Message {
+  id             Int          @id @default(autoincrement())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  text           String?      @db.VarChar(500)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+enum ConversationType {
+  private
+  group
 }
 
 enum PostAttachmentType {

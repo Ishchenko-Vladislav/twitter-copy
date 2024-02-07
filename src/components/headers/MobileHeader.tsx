@@ -8,6 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  SheetClose,
 } from "@/components/ui/sheet";
 import { DefaultAvatar } from "../ui/avatar";
 import { signOut, useSession } from "next-auth/react";
@@ -71,45 +72,55 @@ export const MobileHeader: FC<Props> = ({ withBg = true, title }) => {
             </SheetHeader>
             <div className="flex flex-col gap-3">
               <div className="flex flex-col px-4">
-                <Link href={"/" + data?.user?.id}>
-                  <DefaultAvatar src={data?.user?.avatar ?? ""} />
-                </Link>
+                <SheetClose asChild>
+                  <Link href={"/" + data?.user?.id}>
+                    <DefaultAvatar src={data?.user?.avatar ?? ""} />
+                  </Link>
+                </SheetClose>
                 <div className="text-foreground font-bold">{data?.user?.name}</div>
                 <div className="h-fit !leading-4 text-muted-foreground">{data?.user?.username}</div>
               </div>
               <div className="flex gap-4 items-center text-sm px-4">
-                <Link
-                  className="flex gap-1 hover:border-black border-transparent border-b transition-colors !leading-4"
-                  href={"/" + data?.user?.id + "/following"}
-                >
-                  <span className="font-semibold">{user?._count?.followers}</span>
-                  <span className="text-muted-foreground">Following</span>
-                </Link>
-                <Link
-                  className="flex gap-1 hover:border-black border-transparent border-b transition-colors !leading-4"
-                  href={"/" + data?.user?.id + "/followers"}
-                >
-                  <span className="font-semibold">{user?._count?.following}</span>
-                  <span className="text-muted-foreground">Followers</span>
-                </Link>
+                <SheetClose asChild>
+                  <Link
+                    className="flex gap-1 hover:border-black border-transparent border-b transition-colors !leading-4"
+                    href={"/" + data?.user?.id + "/following"}
+                  >
+                    <span className="font-semibold">{user?._count?.followers}</span>
+                    <span className="text-muted-foreground">Following</span>
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    className="flex gap-1 hover:border-black border-transparent border-b transition-colors !leading-4"
+                    href={"/" + data?.user?.id + "/followers"}
+                  >
+                    <span className="font-semibold">{user?._count?.following}</span>
+                    <span className="text-muted-foreground">Followers</span>
+                  </Link>
+                </SheetClose>
               </div>
               <div>
                 {links.map((el) => (
-                  <Link
-                    className="flex items-center gap-2 text-lg w-full h-12 px-4 active:bg-accent"
-                    href={el.link}
-                  >
-                    <el.icon />
-                    <span className="font-semibold">{el.title}</span>
-                  </Link>
+                  <SheetClose key={el.title} asChild>
+                    <Link
+                      className="flex items-center gap-2 text-lg w-full h-12 px-4 active:bg-accent"
+                      href={el.link}
+                    >
+                      <el.icon />
+                      <span className="font-semibold">{el.title}</span>
+                    </Link>
+                  </SheetClose>
                 ))}
-                <div
-                  onClick={logout}
-                  className="flex items-center gap-2 text-lg w-full h-12 px-4 active:bg-accent"
-                >
-                  <IoExitOutline />
-                  <span className="font-semibold">Log out</span>
-                </div>
+                <SheetClose asChild>
+                  <div
+                    onClick={logout}
+                    className="flex items-center gap-2 text-lg w-full h-12 px-4 active:bg-accent"
+                  >
+                    <IoExitOutline />
+                    <span className="font-semibold">Log out</span>
+                  </div>
+                </SheetClose>
               </div>
             </div>
           </SheetContent>

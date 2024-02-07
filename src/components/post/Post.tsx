@@ -102,7 +102,7 @@ export const Post: FC<Props> = ({ invalidate, ...data }) => {
           <DefaultAvatar src={data.user?.avatar ?? ""} />
         </button>
       </HoverCardUserInfo>
-      <div className="flex flex-col gap-2 max-w-[calc(100%-2.5rem)]">
+      <div className="flex flex-col gap-2 w-full max-w-[calc(100%-3rem)]">
         <div className="flex flex-col w-full overflow-hidden">
           <div className="flex flex-row items-center gap-1 xs:gap-2 text-sm flex-nowrap w-full overflow-hidden ">
             <HoverCardUserInfo
