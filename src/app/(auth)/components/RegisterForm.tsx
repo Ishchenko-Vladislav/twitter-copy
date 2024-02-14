@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { LuLoader2 } from "react-icons/lu";
+import { Loader2 } from "lucide-react";
 interface Props {}
 const formSchema = z.object({
   email: z.string().email(),
@@ -51,7 +51,7 @@ const RegisterForm: FC<Props> = (props) => {
     } catch (error) {
       console.log("error when register", error);
     } finally {
-      setIsLoading(true);
+      setIsLoading(false);
     }
     // console.log(values);
   }
@@ -114,7 +114,7 @@ const RegisterForm: FC<Props> = (props) => {
           )}
         />
         <Button disabled={isLoading} className="w-full" type="submit">
-          {isLoading ? <LuLoader2 className="animate-spin" /> : <span>Create an account</span>}
+          {isLoading ? <Loader2 className="animate-spin" /> : <span>Create an account</span>}
         </Button>
       </form>
     </Form>

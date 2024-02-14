@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
+import { SocketProvider } from "@/context/SocketContext";
+import { ConversationProvider } from "@/context/ConversationContext";
 interface Props {
   session: Session | null;
 }
@@ -14,10 +16,17 @@ interface Props {
 export const RootProvider: FC<PropsWithChildren<Props>> = ({ children, session }) => {
   return (
     <ProviderSession session={session}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-        {children}
-        <Toaster />
-      </ThemeProvider>
+      <ConversationProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
+      </ConversationProvider>
     </ProviderSession>
   );
 };

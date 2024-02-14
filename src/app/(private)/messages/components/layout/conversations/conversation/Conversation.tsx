@@ -10,14 +10,14 @@ interface Props extends ConversationResponse {
 
 export const Conversation: FC<Props> = ({ invalidate, ...data }) => {
   const session = useSession();
-  const recipient = data.member.filter((r) => r.id !== session.data?.user.id);
+  const recipient = data?.member?.filter((r) => r.id !== session.data?.user.id);
   return (
     <Link
       href={"/messages/" + data.id}
       className="px-4 w-full py-2 hover:bg-accent flex items-center gap-2 cursor-pointer"
     >
       <div>
-        {recipient.length === 1 ? (
+        {recipient && recipient.length === 1 ? (
           <DefaultAvatar src={recipient[0].avatar ?? ""} />
         ) : (
           <DefaultAvatar src={recipient[0].avatar ?? ""} />

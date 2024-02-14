@@ -23,13 +23,18 @@ export const useFollow = (
   recipientId: string,
   { withInvalidate = true, invalidateKey, onSuccess }: UseFollowOptions
 ) => {
+  const findIsFollowing = () => {
+    if (data && data.length > 0) {
+      return !!data?.find((el) => el.recipientId === recipientId);
+    } else {
+      return false;
+    }
+  };
   const { data, mutate } = useFollowing();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFollow, setIsFollow] = useState<boolean>(
-    () => !!data?.find((el) => el.recipientId === recipientId)
-  );
+  const [isFollow, setIsFollow] = useState<boolean>(() => findIsFollowing());
   useEffect(() => {
-    setIsFollow(() => !!data?.find((el) => el.recipientId === recipientId));
+    setIsFollow(() => findIsFollowing());
 
     return () => {};
   }, [data]);

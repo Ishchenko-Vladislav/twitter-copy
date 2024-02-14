@@ -9,9 +9,8 @@ import { useCreatePost } from "@/hooks/post/useCreatePost";
 import { FaRegImage } from "react-icons/fa6";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { IoClose } from "react-icons/io5";
-import { LuLoader, LuLoader2 } from "react-icons/lu";
 import { Progress } from "@/components/ui/Progress";
 interface Props {}
 
@@ -120,7 +119,7 @@ const CreatePost: FC<Props> = () => {
               >
                 {isPendingPost ? (
                   <div>
-                    <LuLoader2 className="animate-spin" />
+                    <Loader2 className="animate-spin" />
                   </div>
                 ) : (
                   <span>Post</span>

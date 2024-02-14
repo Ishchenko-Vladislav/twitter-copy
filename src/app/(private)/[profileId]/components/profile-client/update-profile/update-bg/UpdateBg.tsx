@@ -5,7 +5,7 @@ import { ProfileDataDTO } from "../UpdateProfile";
 import { useUploadFile } from "@/hooks/file/useUploadFile";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { LuLoader2 } from "react-icons/lu";
+import { Loader2 } from "lucide-react";
 interface Props {
   data: ProfileDataDTO;
 
@@ -37,7 +37,7 @@ export const UpdateBg: FC<Props> = ({ setData, data }) => {
       <div className="min-h-32 border border-border bg-secondary">
         {isLoading ? (
           <div className="w-full h-full bg-black/20 flex justify-center items-center">
-            <LuLoader2 className="animate-spin text-2xl" />
+            <Loader2 className="animate-spin text-2xl" />
           </div>
         ) : null}
         {!!data.bg ? (

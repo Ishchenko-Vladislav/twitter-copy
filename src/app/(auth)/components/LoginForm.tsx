@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { LuLoader2 } from "react-icons/lu";
+import { Loader2 } from "lucide-react";
 interface Props {}
 const formSchema = z.object({
   email: z.string().email(),
@@ -60,7 +60,7 @@ const LoginForm: FC<Props> = (props) => {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col items-start">
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input placeholder="dev@gmail.com" {...field} />
@@ -74,7 +74,7 @@ const LoginForm: FC<Props> = (props) => {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col items-start">
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="*******" {...field} />
@@ -85,7 +85,7 @@ const LoginForm: FC<Props> = (props) => {
           )}
         />
         <Button disabled={isLoading} className="w-full" type="submit">
-          {isLoading ? <LuLoader2 className="animate-spin" /> : <span>Sign in</span>}
+          {isLoading ? <Loader2 className="animate-spin" /> : <span>Sign in</span>}
         </Button>
       </form>
     </Form>

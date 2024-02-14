@@ -71,3 +71,7 @@ body {
 
 @media (hover: none) {
 }
+
+.infinite-scroll-component__outerdiv {
+  height: 100%;
+}

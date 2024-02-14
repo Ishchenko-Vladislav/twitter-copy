@@ -7,7 +7,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 
 import prisma from "@/lib/prisma";
-import { randomString } from "./utils";
 export const nextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -15,31 +14,13 @@ export const nextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       profile(profile: GoogleProfile, tokens): Awaitable<User> {
-        // console.log("REGISTER PROFILE", profile);
-        // return profile;
-        // const username = profile.email.split("@")[0];
-        // const username = randomString(15)
-        // let isExistUserName = true
-        // while (isExistUserName) {
-        //   const u = await this.userRepository.findOne({ where: { userName } });
-        //   if (!u) {
-        //     isExistUserName = false;
-        //     break;
-        //   }
-        //   userName += Math.random().toString(36).substring(2, 4);
-        // }
         return {
           id: profile?.sub,
           email: profile.email,
           name: profile.name,
           emailVerified: profile.email_verified,
           password: null,
-          // createdAt: new Date(Date.now()),
-          // username,
         } as User;
-        // return {
-        //   id: profile.
-        // }
       },
     }),
     CredentialsProvider({
@@ -49,7 +30,6 @@ export const nextAuthOptions = {
         password: { label: "password", type: "password" },
       },
       async authorize(credentials, req) {
-        // console.log("AUTH HERE");
         if (!credentials?.email || !credentials.password) {
           throw new Error("Invalid credentials");
         }

@@ -6,7 +6,7 @@ import { useUploadFile } from "@/hooks/file/useUploadFile";
 // import { Input } from "postcss";
 import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import { ProfileDataDTO } from "../UpdateProfile";
-import { LuLoader2 } from "react-icons/lu";
+import { Loader2 } from "lucide-react";
 // import {} from '@'
 interface Props {
   data: ProfileDataDTO;
@@ -38,7 +38,7 @@ export const UpdateAvatar: FC<Props> = ({ setData, data }) => {
       <div className="w-fit h-fit relative rounded-full overflow-hidden">
         {isLoading ? (
           <div className="w-full absolute inset-0 z-10 h-full bg-black/20 flex justify-center items-center">
-            <LuLoader2 className="animate-spin text-2xl" />
+            <Loader2 className="animate-spin text-2xl" />
           </div>
         ) : null}
         <DefaultAvatar src={data.avatar ?? ""} className="object-cover" size={"large"} />
