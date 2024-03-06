@@ -47,6 +47,12 @@ export const Recipient = (user: User) => {
       method: "POST",
       body: JSON.stringify(data),
     }).then((res) => res.json());
+    if (res.success && res.data) {
+      ref && ref.current && ref.current.click();
+      push("/messages/" + res.data.id);
+    } else {
+      toast.error("Something went wrong. Try again!");
+    }
     console.log("CREATE CONVERSATION", res);
   };
   return (

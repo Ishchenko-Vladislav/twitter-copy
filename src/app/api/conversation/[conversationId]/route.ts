@@ -3,9 +3,18 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { BaseResponse } from "@/lib/interface";
-type ConversationResponse = Prisma.ConversationGetPayload<{
+export type ConversationResponse = Prisma.ConversationGetPayload<{
   include: {
-    member: true;
+    member: {
+      include: {
+        _count: {
+          select: {
+            followers: true;
+            following: true;
+          };
+        };
+      };
+    };
   };
 }>;
 export interface GetConversationResponse extends BaseResponse<ConversationResponse> {}
@@ -29,7 +38,17 @@ export async function GET(
         id: conversationId,
       },
       include: {
-        member: true,
+        member: {
+          include: {
+            _count: {
+              select: {
+                followers: true,
+                following: true,
+              },
+            },
+          },
+        },
+        lastMessageSend: true,
       },
     });
     return NextResponse.json({

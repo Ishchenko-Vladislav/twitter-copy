@@ -8,14 +8,15 @@ export interface IMessage {
 export const useMessages = (conversationId: string | null) => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitLoading, setIsInitLoading] = useState(false);
   const [isReached, setIsReached] = useState(false);
   const TAKE = 20;
   const getMessages = async () => {
     if (!conversationId) return;
     try {
-      setIsLoading(true);
+      setIsInitLoading(true);
       setIsReached(false);
-      await fetch(`/api/conversation/${conversationId}/message?take=${TAKE}&skip=${0}`)
+      await fetch(`/api/conversation/${conversationId}/message?take=${TAKE}`)
         .then((res) => res.json())
         .then((res) => {
           if (!res || res.length < TAKE) {
@@ -29,7 +30,7 @@ export const useMessages = (conversationId: string | null) => {
         });
     } catch (error) {
     } finally {
-      setIsLoading(false);
+      setIsInitLoading(false);
     }
   };
   const getNextMessages = async () => {
@@ -37,7 +38,9 @@ export const useMessages = (conversationId: string | null) => {
     try {
       setIsLoading(true);
       await fetch(
-        `/api/conversation/${conversationId}/message?take=${TAKE}&skip=${messages.length}`
+        `/api/conversation/${conversationId}/message?take=${TAKE}&date=${
+          messages[messages.length - 1].m.createdAt
+        }`
       )
         .then((res) => res.json())
         .then((res) => {
@@ -77,5 +80,6 @@ export const useMessages = (conversationId: string | null) => {
     isReached,
     getNextMessages,
     addMEssage,
+    isInitLoading,
   };
 };

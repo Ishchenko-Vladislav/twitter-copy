@@ -23,13 +23,14 @@ export async function GET(
     }
     const searchParams = req.nextUrl.searchParams;
     const take = parseInt(searchParams.get("take") ?? "10");
-    const skip = parseInt(searchParams.get("skip") ?? "0");
-    console.log("conversationId", conversationId, params);
+    const date = searchParams.get("date") ?? new Date(Date.now());
     const messages = await prisma.message.findMany({
       where: {
         conversationId: conversationId,
+        createdAt: {
+          lte: date,
+        },
       },
-      skip: skip,
       take: take,
       orderBy: {
         createdAt: "desc",
@@ -65,11 +66,20 @@ export async function POST(
         data: null,
       });
     }
+
     const message = await prisma.message.create({
       data: {
         conversationId,
         userId: session.user.id,
         text: data.text,
+      },
+    });
+    const conversation = await prisma.conversation.update({
+      where: {
+        id: conversationId,
+      },
+      data: {
+        lastMessageSendId: message.id,
       },
     });
     pusherServer.trigger("message", "new_message", message);

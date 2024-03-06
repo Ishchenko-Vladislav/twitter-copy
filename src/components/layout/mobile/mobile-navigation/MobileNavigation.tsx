@@ -11,6 +11,7 @@ import {
   RiNotification2Line,
 } from "react-icons/ri";
 import { IoMailOutline, IoMail } from "react-icons/io5";
+import { cn } from "@/lib/utils";
 interface Props {}
 
 const links = [
@@ -36,10 +37,14 @@ const links = [
   },
 ];
 
-export const MobileNavigation: FC<Props> = () => {
+const MobileNavigation: FC<Props> = () => {
   const pathname = usePathname();
   return (
-    <div className="fixed bottom-0 left-0 w-full h-14 border border-t bg-background z-10 xs:hidden">
+    <div
+      className={cn("fixed bottom-0 left-0 w-full h-14 border border-t bg-background z-10", {
+        ["hidden"]: pathname.startsWith("/messages/"),
+      })}
+    >
       <div className="w-full flex items-center justify-around h-full">
         {links.map((link, index) => {
           const isActive =
@@ -60,3 +65,4 @@ export const MobileNavigation: FC<Props> = () => {
     </div>
   );
 };
+export default MobileNavigation;

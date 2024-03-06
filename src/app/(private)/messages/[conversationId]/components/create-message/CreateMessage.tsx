@@ -44,7 +44,7 @@ export const CreateMessage: FC<Props> = () => {
     }
   };
   return (
-    <div className="w-full p-2 border-t h-16">
+    <div className="w-full p-2 border-t">
       <form
         onSubmit={submit}
         className="relative border border-border flex items-center justify-between px-2 rounded-2xl gap-1 xs:gap-3 h-min"

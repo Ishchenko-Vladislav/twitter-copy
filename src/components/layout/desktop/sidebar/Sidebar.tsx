@@ -6,12 +6,18 @@ import { Avatar, AvatarFallback, AvatarImage, DefaultAvatar } from "@/components
 import { FaUser } from "react-icons/fa6";
 import { useUsers } from "@/hooks/user/useUsers";
 import { User } from "@/components/user/User";
-import { MightKnow } from "./might-know/MightKnow";
+// import { MightKnow } from "./might-know/MightKnow";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { MediaQuery } from "@/components/ui/media-query";
+const MightKnow = dynamic(() => import("./might-know/MightKnow"), {
+  loading: () => <p>Loading...</p>,
+  ssr: false,
+});
 interface Props {}
 
-export const Sidebar: FC<Props> = () => {
+const Sidebar: FC<Props> = () => {
   const pathname = usePathname();
   return (
     <div
@@ -30,3 +36,4 @@ export const Sidebar: FC<Props> = () => {
     </div>
   );
 };
+export default Sidebar;

@@ -3,6 +3,8 @@
 @tailwind utilities;
 body {
   overflow-y: scroll;
+  max-width: 100dvw;
+  overflow-x: hidden;
 }
 @layer base {
   :root {

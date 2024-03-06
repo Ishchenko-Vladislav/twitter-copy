@@ -17,7 +17,7 @@ export type UsersType = Prisma.UserGetPayload<{
 }>;
 export const useUsers = () => {
   const { data, error, isLoading } = useSWR<UsersType[]>(`/api/user`, fetcher, {
-    refreshInterval: 1000 * 30,
+    refreshInterval: 5000,
     refreshWhenHidden: false,
   });
 

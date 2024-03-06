@@ -20,6 +20,7 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { local } from "@/lib/local";
 import { ChatPanel } from "./chat-panel/ChatPanel";
+import { CreateMessage } from "../create-message/CreateMessage";
 
 interface Props {}
 
@@ -50,23 +51,30 @@ export const Chat: FC<Props> = () => {
     recipients,
     isReachedMessage,
     isLoadingMessage,
+    isInitLoadingMessage,
   } = useConversationContext();
   return (
-    <div className="relative h-[calc(100%-4rem)]">
-      <ChatHeader />
-      <InfinityScroll
-        isReached={isReachedMessage}
-        isLoading={isLoadingMessage}
-        endMessage={<ChatPanel />}
-        next={getNextMessages}
-        inverse
-        className="flex flex-col-reverse overflow-y-auto relative gap-1 pb-1 pt-12"
-      >
-        {messages.map((el, index, arr) => {
-          const sameUser = el.m.userId === arr[index + 1]?.m.userId;
+    <InfinityScroll
+      isReached={isReachedMessage}
+      isLoading={isLoadingMessage}
+      endMessage={<ChatPanel />}
+      next={getNextMessages}
+      inverse
+      className="flex flex-col-reverse overflow-y-auto relative gap-1 pb-1 pt-12"
+    >
+      {/* <CreateMessage /> */}
+
+      {isInitLoadingMessage ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Loader />
+        </div>
+      ) : (
+        messages.map((el, index, arr) => {
+          const sameUser = el.m.userId === arr[index - 1]?.m.userId;
           return <Message sameUser={sameUser} key={el.m.id} {...el} />;
-        })}
-        {/* {conversation?.data?.type === "private" ? (
+        })
+      )}
+      {/* {conversation?.data?.type === "private" ? (
           <Link
             href={"/" + recipients[0]?.avatar}
             className="pt-20 w-full flex flex-col justify-center items-center hover:bg-accent mb-4"
@@ -86,8 +94,7 @@ export const Chat: FC<Props> = () => {
         ) : (
           <div>this group</div>
         )} */}
-      </InfinityScroll>
-    </div>
+    </InfinityScroll>
   );
 
   // return (

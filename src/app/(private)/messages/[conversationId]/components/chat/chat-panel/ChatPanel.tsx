@@ -2,6 +2,7 @@ import { DefaultAvatar } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useConversationContext } from "@/context/ConversationContext";
 import { local } from "@/lib/local";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -9,8 +10,9 @@ interface Props {}
 
 export const ChatPanel: FC<Props> = () => {
   const { conversation, recipients } = useConversationContext();
+  const session = useSession();
   return (
-    <div>
+    <div className="">
       {conversation?.data?.type === "private" ? (
         <Link
           href={"/" + recipients[0]?.id}
@@ -19,7 +21,7 @@ export const ChatPanel: FC<Props> = () => {
           <DefaultAvatar size={"md"} src={recipients[0]?.avatar ?? ""} />
           <span className="font-bold">{recipients[0]?.name}</span>
           <span className="text-muted-foreground text-sm !leading-3">
-            @{recipients[0]?.username}
+            @{recipients.filter((el) => el.id !== session.data?.user.id)[0].username}
           </span>
           <div className="mt-4">
             <span className="text-muted-foreground text-sm !leading-3">

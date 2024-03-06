@@ -6,6 +6,7 @@ import { ConversationType, Prisma } from "@prisma/client";
 export type ConversationResponse = Prisma.ConversationGetPayload<{
   include: {
     member: true;
+    lastMessageSend: true;
   };
 }>;
 export interface GetConversationResponse extends BaseResponse<ConversationResponse[]> {}
@@ -27,10 +28,15 @@ export async function GET(req: NextRequest) {
       });
     }
     const searchParams = req.nextUrl.searchParams;
-    const take = searchParams.get("take");
-    const skip = searchParams.get("skip");
+    const take = parseInt(searchParams.get("take") ?? "10");
+    // const skip = searchParams.get("skip");
+    const date = searchParams.get("date") ?? new Date(Date.now());
+
     const conversation = await prisma.conversation.findMany({
       where: {
+        updatedAt: {
+          lte: date,
+        },
         member: {
           some: {
             id: session.user.id,
@@ -39,11 +45,12 @@ export async function GET(req: NextRequest) {
       },
       include: {
         member: true,
+        lastMessageSend: true,
       },
-      skip: skip ? +skip : 0,
+      // skip: skip ? +skip : 0,
       take: take ? +take : 5,
       orderBy: {
-        createdAt: "desc",
+        updatedAt: "desc",
       },
     });
 
@@ -68,6 +75,31 @@ export async function POST(req: NextRequest): Promise<NextResponse<CreateConvers
         data: null,
       });
     }
+    const ids = data.members.map((el: any) => el.id) ?? [];
+
+    const isExist = await prisma.conversation.findFirst({
+      where: {
+        member: {
+          every: {
+            id: {
+              in: ids,
+            },
+          },
+        },
+        type: "private",
+      },
+      include: {
+        member: true,
+        lastMessageSend: true,
+      },
+    });
+    if (isExist) {
+      return NextResponse.json({
+        success: true,
+        message: "Something went wrong. Try again!",
+        data: isExist,
+      });
+    }
     const conv = await prisma.conversation.create({
       data: {
         type: data.type,
@@ -77,12 +109,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<CreateConvers
       },
       include: {
         member: true,
+        lastMessageSend: true,
       },
     });
 
     return NextResponse.json({
       success: true,
-      message: "Something went wrong. Try again!",
+      message: "",
       data: conv,
     });
   } catch (error) {

@@ -1,7 +1,6 @@
 "use client";
 import { FC } from "react";
 import { Popover, PopoverContent, PopoverTrigger, PopoverClose } from "@/components/ui/popover";
-import { FaUser } from "react-icons/fa6";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import { LuPaintbrush } from "react-icons/lu";

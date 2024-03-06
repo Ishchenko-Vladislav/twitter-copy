@@ -17,7 +17,6 @@ export const Client: FC<Props> = () => {
         return (
           <Link className="w-full group block" key={el.name} href={el.link}>
             <div className="w-fit pl-2.5 pr-2.5 xl:pr-5 py-2.5 rounded-full group-hover:bg-accent transition-colors flex gap-1 items-center">
-              {/* <Home /> */}
               {el.link === "/" ? (
                 pathname === "/" ? (
                   <div className="flex items-center gap-2">

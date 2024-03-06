@@ -8,6 +8,7 @@ export const useCreateMessage = (conversationId: string) => {
   const session = useSession();
   const createMessage = async () => {
     try {
+      if (text.trim().length === 0) return;
       setIsLoading(true);
       const data: CreateMessageDTO = {
         conversationId: conversationId,

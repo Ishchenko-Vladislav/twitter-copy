@@ -50,7 +50,7 @@ export const InfinityScroll: FC<PropsWithChildren<Props>> = ({
       {...attr}
     >
       {children}
-      {isReached ? <div>{endMessage}</div> : null}
+      {isReached ? <div className="flex-1">{endMessage}</div> : null}
       {isLoading ? <Loader /> : null}
     </div>
   );
